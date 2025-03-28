@@ -1,15 +1,9 @@
 import { z } from 'zod';
 
-import {
-  createFileRoute,
-  Link,
-  redirect,
-  useRouter,
-} from '@tanstack/react-router';
+import { createFileRoute, Link, useRouter } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 
 import AuthForm from '../components/AuthForm';
-
 import { hashPassword, newSalt } from '../server/auth.server';
 import { prisma } from '../server/db.server';
 import { setLoggedIn, useSession } from '../server/session.server';
@@ -45,7 +39,7 @@ function Login() {
   return (
     <main>
       <AuthForm
-        submitText="Sign Up"
+        variant="signup"
         onSubmit={(username, password) => {
           signup({
             data: {

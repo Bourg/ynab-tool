@@ -1,30 +1,19 @@
-import {
-  createFileRoute,
-  redirect,
-  useLoaderData,
-} from '@tanstack/react-router';
-
-import { getLoggedInUserId, useSession } from '../server/session.server';
-import { prisma } from '../server/db.server';
+import { createFileRoute } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 
+import { authMiddleware } from '../middleware';
+
 export const Route = createFileRoute('/')({
+  beforeLoad: async () => {},
   loader: () => loader(),
   component: Index,
 });
 
-const loader = createServerFn({ method: 'GET' }).handler(async () => {
-  const session = await useSession();
-
-  const userId = getLoggedInUserId(session);
-  if (userId == null) {
-    throw redirect({ to: '/login' });
-  }
-
-  const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
-
-  return { user };
-});
+const loader = createServerFn()
+  .middleware([authMiddleware])
+  .handler(async ({ context }) => {
+    return { user: context.user };
+  });
 
 export function Index() {
   const { user } = Route.useLoaderData();

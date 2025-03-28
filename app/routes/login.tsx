@@ -43,7 +43,7 @@ function Login() {
   return (
     <main>
       <AuthForm
-        submitText="Log In"
+        variant="login"
         onSubmit={(username, password) => {
           login({
             data: {
