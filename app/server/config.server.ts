@@ -1,4 +1,6 @@
-import 'dotenv';
+import { config as configDotenv } from 'dotenv';
+
+configDotenv();
 
 import { z } from 'zod';
 
