@@ -1,9 +1,7 @@
-import {
-  useSession as _useSession,
-  updateSession as _updateSession,
-} from '@tanstack/react-start/server';
+import { useSession as _useSession } from '@tanstack/react-start/server';
 
 import config from './config.server';
+import { User } from '@prisma/client';
 
 const sessionConfig = {
   password: config.session.secret,
@@ -18,8 +16,17 @@ export async function useSession() {
   return _useSession(sessionConfig);
 }
 
-export async function updateSession(
-  update: Parameters<typeof _updateSession>[2],
-) {
-  return _updateSession(sessionConfig, update);
+export type Session = Awaited<ReturnType<typeof useSession>>;
+
+export function getLoggedInUserId(session: Session): User['id'] | null {
+  return session.data.userId ?? null;
+}
+
+export async function setLoggedIn(
+  session: Session,
+  userId: User['id'],
+): Promise<void> {
+  await session.update((prev) => {
+    return { ...prev, userId };
+  });
 }
