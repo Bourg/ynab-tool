@@ -1,4 +1,9 @@
 {
+  "include": [
+    "app.config.ts",
+    "app",
+    "generated"
+  ],
   "compilerOptions": {
     "jsx": "react-jsx",
     "moduleResolution": "Bundler",

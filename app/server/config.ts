@@ -1,6 +1,5 @@
 import 'dotenv';
-
-import { z } from 'zod';
+import { type TypeOf, z } from 'zod';
 
 const configSchema = z.object({
   session: z.object({
@@ -8,8 +7,11 @@ const configSchema = z.object({
   }),
 });
 
-const config = configSchema.parse({
+const rawConfig = {
   session: { secret: process.env.SESSION_SECRET },
-});
+} as TypeOf<typeof configSchema>;
 
-export default config;
+// TODO how to keep this file out of the client bundle?
+// const config = configSchema.parse(rawConfig);
+
+export default rawConfig;
