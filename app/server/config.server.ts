@@ -3,14 +3,19 @@ import 'dotenv';
 import { z } from 'zod';
 
 const configSchema = z.object({
+  auth: z.object({
+    saltLengthBytes: z.number(),
+    keyLengthBytes: z.number(),
+    iterations: z.number(),
+  }),
   session: z.object({
     secret: z.string(),
   }),
 });
 
-// TODO how to keep this file out of the client bundle?
-const configServer = configSchema.parse({
+const config = configSchema.parse({
+  auth: { saltLengthBytes: 32, keyLengthBytes: 128, iterations: 654321 },
   session: { secret: process.env.SESSION_SECRET },
 });
 
-export default configServer;
+export default config;

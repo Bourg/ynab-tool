@@ -1,14 +1,25 @@
-import { useSession as _useSession } from '@tanstack/react-start/server';
+import {
+  useSession as _useSession,
+  updateSession as _updateSession,
+} from '@tanstack/react-start/server';
 
-import configServer from './config.server';
+import config from './config.server';
+
+const sessionConfig = {
+  password: config.session.secret,
+  cookie: {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'lax',
+  },
+} as const;
 
 export async function useSession() {
-  return _useSession({
-    password: configServer.session.secret,
-    cookie: {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'lax',
-    },
-  });
+  return _useSession(sessionConfig);
+}
+
+export async function updateSession(
+  update: Parameters<typeof _updateSession>[2],
+) {
+  return _updateSession(sessionConfig, update);
 }
