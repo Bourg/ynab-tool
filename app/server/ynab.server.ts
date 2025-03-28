@@ -50,7 +50,6 @@ async function fetchAndParseAccessToken(tokenUri: string) {
     refreshToken: refresh_token,
     createdAt: createdAt,
     expiresAt: expiresAt,
-    expiresIn: expires_in,
   };
 }
 

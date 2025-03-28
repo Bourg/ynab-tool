@@ -47,7 +47,7 @@ function Login() {
               password,
             },
           }).then(() => {
-            router.navigate({ to: '/' });
+            router.navigate({ to: '/ynab/connect' });
           });
         }}
       />

@@ -15,6 +15,7 @@ import { Route as SignupImport } from './routes/signup'
 import { Route as LoginImport } from './routes/login'
 import { Route as IndexImport } from './routes/index'
 import { Route as YnabRedirectImport } from './routes/ynab/redirect'
+import { Route as YnabConnectImport } from './routes/ynab/connect'
 
 // Create/Update Routes
 
@@ -39,6 +40,12 @@ const IndexRoute = IndexImport.update({
 const YnabRedirectRoute = YnabRedirectImport.update({
   id: '/ynab/redirect',
   path: '/ynab/redirect',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const YnabConnectRoute = YnabConnectImport.update({
+  id: '/ynab/connect',
+  path: '/ynab/connect',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -67,6 +74,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupImport
       parentRoute: typeof rootRoute
     }
+    '/ynab/connect': {
+      id: '/ynab/connect'
+      path: '/ynab/connect'
+      fullPath: '/ynab/connect'
+      preLoaderRoute: typeof YnabConnectImport
+      parentRoute: typeof rootRoute
+    }
     '/ynab/redirect': {
       id: '/ynab/redirect'
       path: '/ynab/redirect'
@@ -83,6 +97,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/ynab/connect': typeof YnabConnectRoute
   '/ynab/redirect': typeof YnabRedirectRoute
 }
 
@@ -90,6 +105,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/ynab/connect': typeof YnabConnectRoute
   '/ynab/redirect': typeof YnabRedirectRoute
 }
 
@@ -98,15 +114,22 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/ynab/connect': typeof YnabConnectRoute
   '/ynab/redirect': typeof YnabRedirectRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/signup' | '/ynab/redirect'
+  fullPaths: '/' | '/login' | '/signup' | '/ynab/connect' | '/ynab/redirect'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/signup' | '/ynab/redirect'
-  id: '__root__' | '/' | '/login' | '/signup' | '/ynab/redirect'
+  to: '/' | '/login' | '/signup' | '/ynab/connect' | '/ynab/redirect'
+  id:
+    | '__root__'
+    | '/'
+    | '/login'
+    | '/signup'
+    | '/ynab/connect'
+    | '/ynab/redirect'
   fileRoutesById: FileRoutesById
 }
 
@@ -114,6 +137,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
+  YnabConnectRoute: typeof YnabConnectRoute
   YnabRedirectRoute: typeof YnabRedirectRoute
 }
 
@@ -121,6 +145,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
+  YnabConnectRoute: YnabConnectRoute,
   YnabRedirectRoute: YnabRedirectRoute,
 }
 
@@ -137,6 +162,7 @@ export const routeTree = rootRoute
         "/",
         "/login",
         "/signup",
+        "/ynab/connect",
         "/ynab/redirect"
       ]
     },
@@ -148,6 +174,9 @@ export const routeTree = rootRoute
     },
     "/signup": {
       "filePath": "signup.tsx"
+    },
+    "/ynab/connect": {
+      "filePath": "ynab/connect.ts"
     },
     "/ynab/redirect": {
       "filePath": "ynab/redirect.tsx"

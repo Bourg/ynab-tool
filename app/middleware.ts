@@ -26,8 +26,7 @@ export const ynabTokenMiddleware = createMiddleware()
   .middleware([authMiddleware])
   .server(async ({ next, context: { user } }) => {
     if (user.ynabIntegration == null) {
-      // TODO should this be a regular error? Still not clear on when redirects work.
-      throw redirect({ to: '/' });
+      throw redirect({ to: '/ynab/connect' });
     }
 
     // TODO this is kind of jank - make a better refresh detector
