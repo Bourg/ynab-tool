@@ -16,7 +16,7 @@ export async function refreshAccessToken(refreshToken: string) {
   return fetchAndParseAccessToken(tokenUri);
 }
 
-export function getAccessTokenUri({ code, origin }: AccessTokenProps) {
+function getAccessTokenUri({ code, origin }: AccessTokenProps) {
   const params = new URLSearchParams();
   params.set('client_id', config.ynab.oauth.clientId);
   params.set('client_secret', config.ynab.oauth.clientSecret);
@@ -27,7 +27,7 @@ export function getAccessTokenUri({ code, origin }: AccessTokenProps) {
   return `${config.ynab.oauth.tokenUri}?${params.toString()}`;
 }
 
-export function getRefreshTokenUri(refreshToken: string) {
+function getRefreshTokenUri(refreshToken: string) {
   const params = new URLSearchParams();
   params.set('client_id', config.ynab.oauth.clientId);
   params.set('client_secret', config.ynab.oauth.clientSecret);

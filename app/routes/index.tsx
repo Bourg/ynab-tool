@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 
 import { ynabTokenMiddleware } from '../middleware';
+import { API } from 'ynab';
 
 export const Route = createFileRoute('/')({
   beforeLoad: async () => {},
@@ -11,18 +12,22 @@ export const Route = createFileRoute('/')({
 
 const loader = createServerFn()
   .middleware([ynabTokenMiddleware])
-  .handler(async ({ context }) => {
+  .handler(async ({ context: { user, ynabAccessToken } }) => {
+    const budgets = await new API(ynabAccessToken).budgets.getBudgets();
+
     return {
-      user: context.user,
+      user,
+      budgets,
     };
   });
 
 export function Index() {
-  const { user } = Route.useLoaderData();
+  const { user, budgets } = Route.useLoaderData();
 
   return (
     <main>
       <p>You are logged in as {user.username}</p>
+      <pre>{JSON.stringify(budgets, null, 2)}</pre>
     </main>
   );
 }
