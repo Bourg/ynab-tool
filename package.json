@@ -21,6 +21,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "vinxi": "^0.5.3",
+    "ynab": "^2.9.0",
     "zod": "^3.24.2"
   },
   "devDependencies": {

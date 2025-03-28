@@ -2,6 +2,7 @@ import { createMiddleware } from '@tanstack/react-start';
 import { getLoggedInUserId, useSession } from './server/session.server';
 import { redirect } from '@tanstack/react-router';
 import { prisma } from './server/db.server';
+import { refreshAccessToken } from './server/ynab.server';
 
 export const authMiddleware = createMiddleware().server(async ({ next }) => {
   const session = await useSession();
@@ -20,3 +21,29 @@ export const authMiddleware = createMiddleware().server(async ({ next }) => {
 
   return await next({ context: { user } });
 });
+
+export const ynabTokenMiddleware = createMiddleware()
+  .middleware([authMiddleware])
+  .server(async ({ next, context: { user } }) => {
+    if (user.ynabIntegration == null) {
+      // TODO should this be a regular error? Still not clear on when redirects work.
+      throw redirect({ to: '/' });
+    }
+
+    // TODO this is kind of jank - make a better refresh detector
+    let accessToken = user.ynabIntegration.accessToken;
+    if (user.ynabIntegration.expiresAt < new Date()) {
+      const refreshedToken = await refreshAccessToken(
+        user.ynabIntegration.refreshToken,
+      );
+
+      const ynabIntegration = await prisma.ynabIntegration.update({
+        where: { userId: user.id },
+        data: refreshedToken,
+      });
+      user.ynabIntegration = ynabIntegration;
+      accessToken = ynabIntegration.accessToken;
+    }
+
+    return await next({ context: { user, ynabAccessToken: accessToken } });
+  });
