@@ -10,7 +10,10 @@ export const authMiddleware = createMiddleware().server(async ({ next }) => {
     throw redirect({ to: '/login' });
   }
 
-  const user = await prisma.user.findUnique({ where: { id: userId } });
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    include: { ynabIntegration: true },
+  });
   if (user == null) {
     throw redirect({ to: '/login' });
   }

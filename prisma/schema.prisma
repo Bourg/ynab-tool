@@ -8,8 +8,19 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  username String @unique
-  hashedPassword String @unique
-  salt String @unique
+  id              Int              @id @default(autoincrement())
+  username        String           @unique
+  hashedPassword  String           @unique
+  salt            String           @unique
+  ynabIntegration YnabIntegration?
+}
+
+model YnabIntegration {
+  id           Int      @id @default(autoincrement())
+  user         User     @relation(fields: [userId], references: [id])
+  userId       Int      @unique
+  accessToken  String
+  refreshToken String
+  createdAt    DateTime @db.Timestamptz()
+  expiresAt    DateTime @db.Timestamptz()
 }
