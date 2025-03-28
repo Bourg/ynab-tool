@@ -5,7 +5,30 @@ export function newSalt(): string {
   return randomBytes(config.auth.saltLengthBytes).toString('hex');
 }
 
-export function hashPassword(password: string, salt: string): Promise<string> {
+export async function isCorrectPassword({
+  providedPassword,
+  expectedHashedPassword,
+  salt,
+}: {
+  providedPassword: string;
+  expectedHashedPassword: string;
+  salt: string;
+}) {
+  const actualHashedPassword = await hashPassword({
+    password: providedPassword,
+    salt,
+  });
+
+  return actualHashedPassword === expectedHashedPassword;
+}
+
+export function hashPassword({
+  password,
+  salt,
+}: {
+  password: string;
+  salt: string;
+}): Promise<string> {
   return new Promise((resolve, reject) => {
     pbkdf2(
       password,

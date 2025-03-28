@@ -28,7 +28,7 @@ const signup = createServerFn({ method: 'POST' })
   .handler(async ({ data: { username, password } }) => {
     const salt = newSalt();
     const [hashedPassword, session] = await Promise.all([
-      hashPassword(password, salt),
+      hashPassword({ password, salt }),
       useSession(),
     ]);
 

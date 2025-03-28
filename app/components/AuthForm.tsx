@@ -2,10 +2,10 @@ import { useId } from 'react';
 
 export interface AuthFormProps {
   onSubmit: (username: string, password: string) => void;
-  submitText: string;
+  variant: 'login' | 'signup';
 }
 
-export default function AuthForm({ onSubmit, submitText }: AuthFormProps) {
+export default function AuthForm({ onSubmit, variant }: AuthFormProps) {
   const usernameId = useId();
   const passwordId = useId();
 
@@ -23,12 +23,24 @@ export default function AuthForm({ onSubmit, submitText }: AuthFormProps) {
       }}
     >
       <label htmlFor={usernameId}>Username</label>
-      <input id={usernameId} name="username" type="username" />
+      <input
+        id={usernameId}
+        name="username"
+        type="username"
+        autoComplete="username"
+      />
 
       <label htmlFor={passwordId}>Password</label>
-      <input id={passwordId} name="password" type="password" />
+      <input
+        id={passwordId}
+        name="password"
+        type="password"
+        autoComplete={
+          variant === 'signup' ? 'new-password' : 'current-password'
+        }
+      />
 
-      <button type="submit">{submitText}</button>
+      <button type="submit">{variant === 'login' ? 'Login' : 'Sign Up'}</button>
     </form>
   );
 }
