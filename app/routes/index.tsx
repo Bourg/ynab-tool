@@ -1,8 +1,18 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
-import { useSession } from '../server/session';
 
-import { prisma } from '../server/db';
+import { prisma } from '../server/db.server';
+import { useSession } from '../server/session.server';
+
+const loader = createServerFn({ method: 'GET' }).handler(async () => {
+  const session = await useSession();
+  const users = await prisma.user.findMany();
+
+  return {
+    sessionId: session.id,
+    users,
+  };
+});
 
 const createUser = createServerFn({ method: 'POST' }).handler(async () => {
   return prisma.user.create({
@@ -12,15 +22,7 @@ const createUser = createServerFn({ method: 'POST' }).handler(async () => {
 
 export const Route = createFileRoute('/')({
   component: Home,
-  loader: async () => {
-    const session = await useSession();
-    const users = await prisma.user.findMany();
-
-    return {
-      session,
-      users,
-    };
-  },
+  loader: async () => loader(),
 });
 
 function Home() {

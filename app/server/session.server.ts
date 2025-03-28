@@ -1,10 +1,10 @@
 import { useSession as _useSession } from '@tanstack/react-start/server';
 
-import config from './config';
+import configServer from './config.server';
 
 export async function useSession() {
   return _useSession({
-    password: config.session.secret,
+    password: configServer.session.secret,
     cookie: {
       httpOnly: true,
       secure: true,
