@@ -1,3 +1,4 @@
+import './server/config';
 import {
   createStartHandler,
   defaultStreamHandler,
