@@ -8,17 +8,25 @@
     "build": "vinxi build",
     "start": "vinxi start",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@prisma/client": "^6.5.0",
     "@tanstack/react-router": "^1.114.29",
     "@tanstack/react-start": "^1.114.29",
+    "@tanstack/zod-adapter": "^1.114.29",
+    "dotenv": "^16.4.7",
+    "node-fetch": "^3.3.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "vinxi": "^0.5.3"
+    "vinxi": "^0.5.3",
+    "ynab": "^2.9.0",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
+    "@types/node": "^22.13.14",
     "@types/react": "^19.0.12",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
@@ -26,6 +34,7 @@
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "prettier": "^3.5.3",
+    "prisma": "^6.5.0",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.24.1",
     "vite": "^6.2.0",
