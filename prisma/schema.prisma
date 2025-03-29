@@ -12,6 +12,8 @@ model User {
   username        String           @unique
   hashedPassword  String           @unique
   salt            String           @unique
+  createdAt DateTime @default(now()) @db.Timestamptz()
+  updatedAt DateTime @updatedAt @db.Timestamptz()
   ynabIntegration YnabIntegration?
 }
 
