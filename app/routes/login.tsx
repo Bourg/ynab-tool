@@ -1,10 +1,10 @@
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
-import { setLoggedIn, useSession } from '~/server/session.server';
 import AuthForm from '~/components/AuthForm';
-import { prisma } from '~/server/db.server';
 import { isCorrectPassword } from '~/server/auth.server';
+import { prisma } from '~/server/db.server';
+import { setLoggedIn, useSession } from '~/server/session.server';
 
 export const Route = createFileRoute('/login')({
   component: Login,

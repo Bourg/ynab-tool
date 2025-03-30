@@ -32,7 +32,10 @@ export default tseslint.config(
         'warn',
         { allowConstantExport: true },
       ],
-      'import/order': ['error'],
+      'import/order': [
+        'error',
+        { alphabetize: { order: 'asc', caseInsensitive: true } },
+      ],
     },
     settings: {
       'import/resolver': { typescript: true, node: true },

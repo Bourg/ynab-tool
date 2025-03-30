@@ -1,6 +1,6 @@
+import { User } from '@prisma/client';
 import { useSession as _useSession } from '@tanstack/react-start/server';
 
-import { User } from '@prisma/client';
 import config from './config.server';
 
 const sessionConfig = {
