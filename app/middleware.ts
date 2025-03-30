@@ -1,6 +1,6 @@
 import { createMiddleware } from '@tanstack/react-start';
-import { getLoggedInUserId, useSession } from './server/session.server';
 import { redirect } from '@tanstack/react-router';
+import { getLoggedInUserId, useSession } from './server/session.server';
 import { prisma } from './server/db.server';
 import { refreshAccessToken } from './server/ynab.server';
 
