@@ -3,10 +3,10 @@ import { z } from 'zod';
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 
-import AuthForm from '../components/AuthForm';
-import { hashPassword, newSalt } from '../server/auth.server';
-import { prisma } from '../server/db.server';
-import { setLoggedIn, useSession } from '../server/session.server';
+import AuthForm from '~/components/AuthForm';
+import { hashPassword, newSalt } from '~/server/auth.server';
+import { prisma } from '~/server/db.server';
+import { setLoggedIn, useSession } from '~/server/session.server';
 
 export const Route = createFileRoute('/signup')({
   component: Login,

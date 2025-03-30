@@ -1,11 +1,11 @@
 import { z } from 'zod';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { zodValidator } from '@tanstack/zod-adapter';
-import { getAccessToken } from '../../server/ynab.server';
+import { getAccessToken } from '~/server/ynab.server';
 import { createServerFn } from '@tanstack/react-start';
-import { authMiddleware } from '../../middleware';
+import { authMiddleware } from '~/middleware';
 import { useEffect, useRef } from 'react';
-import { prisma } from '../../server/db.server';
+import { prisma } from '~/server/db.server';
 
 const codeValidator = z.object({ code: z.string() });
 

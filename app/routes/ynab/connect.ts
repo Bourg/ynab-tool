@@ -1,9 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 
-import { authMiddleware } from '../../middleware';
-import config from '../../server/config.server';
-import { getAuthorizeUri } from '../../util/ynab';
+import { authMiddleware } from '~/middleware';
+import config from '~/server/config.server';
+import { getAuthorizeUri } from '~/util/ynab';
 import { useEffect } from 'react';
 
 const loader = createServerFn({ method: 'POST' })
