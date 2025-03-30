@@ -7,11 +7,15 @@ export async function getBudgets(
   integration: YnabIntegration,
 ): Promise<Array<YnabBudget>> {
   const budgets = await findBudgets(integration);
-
   if (budgets.length > 0) {
     return budgets;
   }
 
+  await updateBudgets(integration);
+  return findBudgets(integration);
+}
+
+async function updateBudgets(integration: YnabIntegration) {
   const budgetsResponse = await new API(
     integration.accessToken,
   ).budgets.getBudgets();
@@ -24,8 +28,6 @@ export async function getBudgets(
       isoCurrencyCode: budget.currency_format!.iso_code,
     })),
   });
-
-  return findBudgets(integration);
 }
 
 function findBudgets(integration: YnabIntegration) {
