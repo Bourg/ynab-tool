@@ -1,11 +1,12 @@
-import { z } from 'zod';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
-import { zodValidator } from '@tanstack/zod-adapter';
-import { getAccessToken } from '../../server/ynab.server';
 import { createServerFn } from '@tanstack/react-start';
-import { authMiddleware } from '../../middleware';
+import { zodValidator } from '@tanstack/zod-adapter';
 import { useEffect, useRef } from 'react';
-import { prisma } from '../../server/db.server';
+import { z } from 'zod';
+
+import { authMiddleware } from '~/middleware';
+import { prisma } from '~/server/db.server';
+import { getAccessToken } from '~/server/ynab.server';
 
 const codeValidator = z.object({ code: z.string() });
 
@@ -41,5 +42,5 @@ function Redirect() {
     loadAccessToken({ data: { code, origin: window.location.origin } }).then(
       () => router.navigate({ to: '/' }),
     );
-  }, [code]);
+  }, [code, router]);
 }

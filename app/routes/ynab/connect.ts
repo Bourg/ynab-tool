@@ -1,10 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
-
-import { authMiddleware } from '../../middleware';
-import config from '../../server/config.server';
-import { getAuthorizeUri } from '../../util/ynab';
 import { useEffect } from 'react';
+
+import { authMiddleware } from '~/middleware';
+import config from '~/server/config.server';
+import { getAuthorizeUri } from '~/util/ynab';
 
 const loader = createServerFn({ method: 'POST' })
   .middleware([authMiddleware])
@@ -21,11 +21,11 @@ export const Route = createFileRoute('/ynab/connect')({
 });
 
 function Connect() {
-  const loaderData = Route.useLoaderData();
+  const { authorizeUri, clientId } = Route.useLoaderData();
 
   useEffect(() => {
-    initiateYnabLogin(loaderData);
-  }, []);
+    initiateYnabLogin({ authorizeUri, clientId });
+  }, [authorizeUri, clientId]);
 }
 
 function initiateYnabLogin(

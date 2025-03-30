@@ -26,7 +26,7 @@ export const tokenResponseValidator = z.object({
   created_at: z.number(),
 });
 
-type TokenResponse = TypeOf<typeof tokenResponseValidator>;
+export type TokenResponse = TypeOf<typeof tokenResponseValidator>;
 
 export function getRedirectUri({ origin }: { origin: string }) {
   return `${origin}/ynab/redirect`;

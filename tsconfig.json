@@ -1,18 +1,24 @@
 {
   "include": [
     "app.config.ts",
-    "app",
-    "generated"
+    "app/**/*",
+    "generated/**/*"
   ],
   "compilerOptions": {
     "jsx": "react-jsx",
-    "moduleResolution": "Bundler",
+    "moduleResolution": "bundler",
     "module": "ESNext",
     "target": "ES2022",
     "skipLibCheck": true,
     "strictNullChecks": true,
     "allowJs": false,
     "strict": true,
-    "verbatimModuleSyntax": false
+    "verbatimModuleSyntax": false,
+    "noEmit": true,
+    "paths": {
+      "~/*": [
+        "./app/*"
+      ]
+    }
   }
 }

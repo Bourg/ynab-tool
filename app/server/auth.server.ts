@@ -1,4 +1,5 @@
 import { randomBytes, pbkdf2 } from 'node:crypto';
+
 import config from './config.server';
 
 export function newSalt(): string {

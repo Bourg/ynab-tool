@@ -1,7 +1,8 @@
-import { createMiddleware } from '@tanstack/react-start';
-import { getLoggedInUserId, useSession } from './server/session.server';
 import { redirect } from '@tanstack/react-router';
+import { createMiddleware } from '@tanstack/react-start';
+
 import { prisma } from './server/db.server';
+import { getLoggedInUserId, useSession } from './server/session.server';
 import { refreshAccessToken } from './server/ynab.server';
 
 export const authMiddleware = createMiddleware().server(async ({ next }) => {
