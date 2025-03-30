@@ -21,11 +21,11 @@ export const Route = createFileRoute('/ynab/connect')({
 });
 
 function Connect() {
-  const loaderData = Route.useLoaderData();
+  const { authorizeUri, clientId } = Route.useLoaderData();
 
   useEffect(() => {
-    initiateYnabLogin(loaderData);
-  }, []);
+    initiateYnabLogin({ authorizeUri, clientId });
+  }, [authorizeUri, clientId]);
 }
 
 function initiateYnabLogin(

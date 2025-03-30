@@ -41,5 +41,5 @@ function Redirect() {
     loadAccessToken({ data: { code, origin: window.location.origin } }).then(
       () => router.navigate({ to: '/' }),
     );
-  }, [code]);
+  }, [code, router]);
 }
