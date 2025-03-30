@@ -8,8 +8,10 @@
     "build": "vinxi build",
     "start": "vinxi start",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "preview": "vite preview",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "typecheck": "tsc"
   },
   "dependencies": {
     "@prisma/client": "^6.5.0",
