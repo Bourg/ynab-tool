@@ -1,6 +1,6 @@
 import { randomBytes, pbkdf2 } from 'node:crypto';
 
-import config from './config.server';
+import config from './config';
 
 export function newSalt(): string {
   return randomBytes(config.auth.saltLengthBytes).toString('hex');

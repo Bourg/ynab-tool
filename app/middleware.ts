@@ -1,9 +1,9 @@
 import { redirect } from '@tanstack/react-router';
 import { createMiddleware } from '@tanstack/react-start';
 
-import { prisma } from './server/db.server';
-import { getLoggedInUserId, useSession } from './server/session.server';
-import { refreshAccessToken } from './server/ynab.server';
+import { prisma } from './server/db';
+import { getLoggedInUserId, useSession } from './server/session';
+import { refreshAccessToken } from './server/ynab/auth';
 
 export const authMiddleware = createMiddleware().server(async ({ next }) => {
   const session = await useSession();
@@ -23,27 +23,27 @@ export const authMiddleware = createMiddleware().server(async ({ next }) => {
   return await next({ context: { user } });
 });
 
-export const ynabTokenMiddleware = createMiddleware()
+export const ynabIntegrationMiddleware = createMiddleware()
   .middleware([authMiddleware])
   .server(async ({ next, context: { user } }) => {
-    if (user.ynabIntegration == null) {
+    let { ynabIntegration } = user;
+    if (ynabIntegration == null) {
       throw redirect({ to: '/ynab/connect' });
     }
 
     // TODO this is kind of jank - make a better refresh detector
-    let accessToken = user.ynabIntegration.accessToken;
-    if (user.ynabIntegration.expiresAt < new Date()) {
+    // TODO where should I even do this...?
+    if (ynabIntegration.expiresAt < new Date()) {
       const refreshedToken = await refreshAccessToken(
-        user.ynabIntegration.refreshToken,
+        ynabIntegration.refreshToken,
       );
 
-      const ynabIntegration = await prisma.ynabIntegration.update({
+      ynabIntegration = await prisma.ynabIntegration.update({
         where: { userId: user.id },
         data: refreshedToken,
       });
       user.ynabIntegration = ynabIntegration;
-      accessToken = ynabIntegration.accessToken;
     }
 
-    return await next({ context: { user, ynabAccessToken: accessToken } });
+    return await next({ context: { user, ynabIntegration } });
   });

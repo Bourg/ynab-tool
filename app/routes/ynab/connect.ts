@@ -3,7 +3,7 @@ import { createServerFn } from '@tanstack/react-start';
 import { useEffect } from 'react';
 
 import { authMiddleware } from '~/middleware';
-import config from '~/server/config.server';
+import config from '~/server/config';
 import { getAuthorizeUri } from '~/util/ynab';
 
 const loader = createServerFn({ method: 'POST' })

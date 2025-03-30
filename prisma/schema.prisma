@@ -12,17 +12,26 @@ model User {
   username        String           @unique
   hashedPassword  String           @unique
   salt            String           @unique
-  createdAt DateTime @default(now()) @db.Timestamptz()
-  updatedAt DateTime @updatedAt @db.Timestamptz()
+  createdAt       DateTime         @default(now()) @db.Timestamptz()
+  updatedAt       DateTime         @updatedAt @db.Timestamptz()
   ynabIntegration YnabIntegration?
 }
 
 model YnabIntegration {
-  id           Int      @id @default(autoincrement())
-  user         User     @relation(fields: [userId], references: [id])
-  userId       Int      @unique
+  id           Int          @id @default(autoincrement())
+  user         User         @relation(fields: [userId], references: [id])
+  userId       Int          @unique
   accessToken  String
   refreshToken String
-  createdAt    DateTime @db.Timestamptz()
-  expiresAt    DateTime @db.Timestamptz()
+  createdAt    DateTime     @db.Timestamptz()
+  expiresAt    DateTime     @db.Timestamptz()
+  ynabBudgets  YnabBudget[]
+}
+
+model YnabBudget {
+  id                String          @id
+  ynabIntegrationId Int
+  name              String
+  isoCurrencyCode   String
+  ynabIntegration   YnabIntegration @relation(fields: [ynabIntegrationId], references: [id])
 }
