@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
+
 import AuthForm from '~/components/AuthForm';
 import { isCorrectPassword } from '~/server/auth.server';
 import { prisma } from '~/server/db.server';

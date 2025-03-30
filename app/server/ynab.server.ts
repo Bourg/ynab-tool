@@ -1,4 +1,5 @@
 import config from './config.server';
+
 import { getRedirectUri, tokenResponseValidator } from '~/util/ynab';
 
 export interface AccessTokenProps {

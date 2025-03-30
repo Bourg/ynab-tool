@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
-
 import { API } from 'ynab';
+
 import { ynabTokenMiddleware } from '~/middleware';
 
 export const Route = createFileRoute('/')({

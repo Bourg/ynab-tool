@@ -1,8 +1,7 @@
 import { config as configDotenv } from 'dotenv';
+import { z } from 'zod';
 
 configDotenv();
-
-import { z } from 'zod';
 
 const configSchema = z.object({
   auth: z.object({
