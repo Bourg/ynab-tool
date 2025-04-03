@@ -6,8 +6,8 @@ import { ynabIntegrationMiddleware } from '~/middleware';
 import { getBudget } from '~/server/ynab/data';
 
 const loader = createServerFn()
-  .validator(z.object({ budgetId: z.string() }))
   .middleware([ynabIntegrationMiddleware])
+  .validator(z.object({ budgetId: z.string() }))
   .handler(async ({ context: { ynabIntegration }, data: { budgetId } }) =>
     getBudget(ynabIntegration, budgetId),
   );
@@ -20,5 +20,23 @@ export const Route = createFileRoute('/budget/$budgetId')({
 function RouteComponent() {
   const budget = Route.useLoaderData();
 
-  return <pre>{JSON.stringify(budget, null, 2)}</pre>;
+  return (
+    <main>
+      <h1>{budget.name}</h1>
+      <h2>Accounts</h2>
+      <ul>
+        {budget.accounts.map((account) => (
+          <li key={account.id}>{account.name}</li>
+        ))}
+      </ul>
+      <h2>Categories</h2>
+      <ul>
+        {budget.categories.map((category) => (
+          <li key={category.id}>
+            {category.name} (hidden={String(category.hidden)})
+          </li>
+        ))}
+      </ul>
+    </main>
+  );
 }

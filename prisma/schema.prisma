@@ -59,6 +59,7 @@ model Category {
   sequence  BigInt   @default(autoincrement())
   name      String
   balance   BigInt
+  hidden    Boolean
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt @db.Timestamptz()
   budgetId  String

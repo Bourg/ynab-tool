@@ -120,12 +120,14 @@ async function updateAccountsAndCategories(
           update: {
             name: category.name,
             balance: category.balance,
+            hidden: category.hidden,
           },
           create: {
             id: category.id,
             budgetId: budget.id,
             name: category.name,
             balance: category.balance,
+            hidden: category.hidden,
           },
           where: {
             id: category.id,
