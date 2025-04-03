@@ -18,20 +18,51 @@ model User {
 }
 
 model YnabIntegration {
-  id           Int          @id @default(autoincrement())
-  user         User         @relation(fields: [userId], references: [id])
-  userId       Int          @unique
+  id           Int      @id @default(autoincrement())
+  user         User     @relation(fields: [userId], references: [id])
+  userId       Int      @unique
   accessToken  String
   refreshToken String
-  createdAt    DateTime     @db.Timestamptz()
-  expiresAt    DateTime     @db.Timestamptz()
-  ynabBudgets  YnabBudget[]
+  createdAt    DateTime @db.Timestamptz()
+  expiresAt    DateTime @db.Timestamptz()
+  budgets      Budget[]
 }
 
-model YnabBudget {
+model Budget {
   id                String          @id
   ynabIntegrationId Int
+  serverKnowledge   Int?
   name              String
   isoCurrencyCode   String
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt @db.Timestamptz()
   ynabIntegration   YnabIntegration @relation(fields: [ynabIntegrationId], references: [id])
+  accounts          Account[]
+  categories        Category[]
+}
+
+model Account {
+  id        String   @id
+  sequence  BigInt   @default(autoincrement())
+  name      String
+  balance   BigInt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @db.Timestamptz()
+  budget    Budget   @relation(fields: [budgetId], references: [id])
+  budgetId  String
+
+  @@index([budgetId, createdAt])
+}
+
+model Category {
+  id        String   @id
+  sequence  BigInt   @default(autoincrement())
+  name      String
+  balance   BigInt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @db.Timestamptz()
+  budgetId  String
+  budget    Budget   @relation(fields: [budgetId], references: [id])
+
+  @@index([budgetId, createdAt])
 }
