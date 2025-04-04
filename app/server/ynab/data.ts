@@ -63,9 +63,13 @@ export async function updateAccountsAndCategories(
 
   const budget = budgetResponse.data.budget;
 
-  const [updatedAccounts, deletedAccountIds] = splitDeletions(budget.accounts);
+  const [updatedAccounts, deletedAccountIds] = splitDeletions(
+    budget.accounts,
+    (a) => a.deleted || a.closed,
+  );
   const [updatedCategories, deletedCategoryIds] = splitDeletions(
     budget.categories,
+    (c) => c.deleted,
   );
 
   await prisma.$transaction(async (tx) => {
@@ -174,15 +178,16 @@ function findBudgets(integration: YnabIntegration) {
   });
 }
 
-function splitDeletions<T extends { id: any; deleted?: boolean | null }>(
+function splitDeletions<T extends { id: any }>(
   ts: T[] | null | undefined,
+  splitter: (deletable: T) => boolean | null | undefined,
 ): [T[], T['id'][]] {
   const notDeleted: T[] = [];
   const deletedIds: T['id'][] = [];
 
   if (Array.isArray(ts)) {
     ts.forEach((t) => {
-      if (t.deleted) {
+      if (splitter(t)) {
         deletedIds.push(t.id);
       } else {
         notDeleted.push(t);
