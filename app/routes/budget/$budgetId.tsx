@@ -36,14 +36,22 @@ const assignCategoryToAccount = createServerFn({ method: 'POST' })
   .validator(
     z.object({ accountId: z.string().nullable(), categoryId: z.string() }),
   )
-  .handler(async ({ data: { accountId, categoryId } }) => {
-    // TODO need to permission check this
+  .handler(async ({ context: { user }, data: { accountId, categoryId } }) => {
     await prisma.category.update({
       data: {
         assignedToAccountId: accountId,
         anyAccount: accountId == null,
       },
-      where: { id: categoryId },
+      where: {
+        id: categoryId,
+        budget: {
+          userAssociations: {
+            some: {
+              userId: user.id,
+            },
+          },
+        },
+      },
     });
   });
 
