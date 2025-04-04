@@ -1,34 +1,42 @@
-import { Budget, YnabIntegration } from '@prisma/client';
+import { Budget, User, YnabIntegration } from '@prisma/client';
 import { API } from 'ynab';
 
 import { prisma } from '~/server/db';
 
-export async function getBudgets(
+export async function findOrInitializeBudgets(
+  userId: User['id'],
   integration: YnabIntegration,
 ): Promise<Array<Budget>> {
-  const budgets = await findBudgets(integration);
+  const budgets = await findBudgets(userId);
   if (budgets.length > 0) {
     return budgets;
   }
 
-  await updateBudgets(integration);
-  return findBudgets(integration);
+  await updateBudgets(userId, integration);
+  return findBudgets(userId);
 }
 
-export async function getBudget(
-  integration: YnabIntegration,
+export async function findOrInitializeBudget(
+  userId: User['id'],
   budgetId: Budget['id'],
+  integration: YnabIntegration,
 ) {
-  return getBudgetInternal(integration, budgetId, true);
+  return findOrInitializeBudgetInternal(userId, budgetId, integration, true);
 }
 
-async function getBudgetInternal(
-  integration: YnabIntegration,
+async function findOrInitializeBudgetInternal(
+  userId: User['id'],
   budgetId: Budget['id'],
+  integration: YnabIntegration,
   attemptLoad: boolean,
 ) {
   const budget = await prisma.budget.findUnique({
-    where: { id: budgetId },
+    where: {
+      id: budgetId,
+      userAssociations: {
+        some: { userId },
+      },
+    },
     include: {
       accounts: {
         orderBy: { sequence: 'asc' },
@@ -47,14 +55,15 @@ async function getBudgetInternal(
     throw new Error('Budget failed to load');
   }
 
-  await updateAccountsAndCategories(integration, budgetId);
+  await updateBudget(userId, budgetId, integration);
 
-  return getBudgetInternal(integration, budgetId, false);
+  return findOrInitializeBudgetInternal(userId, budgetId, integration, false);
 }
 
-export async function updateAccountsAndCategories(
-  integration: YnabIntegration,
+export async function updateBudget(
+  userId: User['id'],
   budgetId: Budget['id'],
+  integration: YnabIntegration,
   serverKnowledge?: Budget['serverKnowledge'],
 ) {
   const budgetResponse = await new API(
@@ -73,15 +82,23 @@ export async function updateAccountsAndCategories(
   );
 
   await prisma.$transaction(async (tx) => {
+    const budgetPayload = {
+      name: budget.name,
+      isoCurrencyCode: budget.currency_format!.iso_code,
+      serverKnowledge: budgetResponse.data.server_knowledge,
+      userAssociations: {
+        connect: {
+          userId_budgetId: { userId, budgetId },
+        },
+      },
+    } as const;
+
     const upsertBudget = tx.budget.upsert({
       create: {
+        ...budgetPayload,
         id: budgetId,
-        ynabIntegrationId: integration.id,
-        name: budget.name,
-        isoCurrencyCode: budget.currency_format!.iso_code,
-        serverKnowledge: budgetResponse.data.server_knowledge,
       },
-      update: { serverKnowledge: budgetResponse.data.server_knowledge },
+      update: budgetPayload,
       where: {
         id: budgetId,
       },
@@ -152,30 +169,51 @@ export async function updateAccountsAndCategories(
   });
 }
 
-async function updateBudgets(integration: YnabIntegration) {
-  const budgetsResponse = await new API(
-    integration.accessToken,
-  ).budgets.getBudgets();
-
-  await prisma.budget.createMany({
-    data: budgetsResponse.data.budgets.map((budget) => ({
-      id: budget.id,
-      ynabIntegrationId: integration.id,
-      name: budget.name,
-      isoCurrencyCode: budget.currency_format!.iso_code,
-    })),
-  });
-}
-
-function findBudgets(integration: YnabIntegration) {
+function findBudgets(userId: User['id']) {
   return prisma.budget.findMany({
     where: {
-      ynabIntegrationId: integration.id,
+      userAssociations: {
+        some: {
+          userId,
+        },
+      },
     },
     orderBy: {
       name: 'asc',
     },
   });
+}
+
+async function updateBudgets(userId: User['id'], integration: YnabIntegration) {
+  const budgetsResponse = await new API(
+    integration.accessToken,
+  ).budgets.getBudgets();
+
+  await prisma.$transaction((tx) =>
+    Promise.all(
+      budgetsResponse.data.budgets.map((budget) => {
+        const payload = {
+          id: budget.id,
+          name: budget.name,
+          isoCurrencyCode: budget.currency_format!.iso_code,
+          userAssociations: {
+            connectOrCreate: {
+              create: { userId },
+              where: { userId_budgetId: { userId, budgetId: budget.id } },
+            },
+          },
+        } as const;
+
+        return tx.budget.upsert({
+          create: payload,
+          update: payload,
+          where: {
+            id: budget.id,
+          },
+        });
+      }),
+    ),
+  );
 }
 
 function splitDeletions<T extends { id: any }>(

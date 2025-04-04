@@ -7,23 +7,29 @@ import { z } from 'zod';
 import { useCurrency } from '~/hooks/useCurrency';
 import { authMiddleware, ynabIntegrationMiddleware } from '~/middleware';
 import { prisma } from '~/server/db';
-import { getBudget, updateAccountsAndCategories } from '~/server/ynab/data';
+import { findOrInitializeBudget, updateBudget } from '~/server/ynab/data';
 
 const loader = createServerFn()
   .middleware([ynabIntegrationMiddleware])
   .validator(z.object({ budgetId: z.string() }))
-  .handler(async ({ context: { ynabIntegration }, data: { budgetId } }) => {
-    const budget = await getBudget(ynabIntegration, budgetId);
+  .handler(
+    async ({ context: { user, ynabIntegration }, data: { budgetId } }) => {
+      const budget = await findOrInitializeBudget(
+        user.id,
+        budgetId,
+        ynabIntegration,
+      );
 
-    const nextCategoryToAssign = await prisma.category.findFirst({
-      where: {
-        assignedToAccount: null,
-        anyAccount: false,
-      },
-    });
+      const nextCategoryToAssign = await prisma.category.findFirst({
+        where: {
+          assignedToAccount: null,
+          anyAccount: false,
+        },
+      });
 
-    return { budget, nextCategoryToAssign };
-  });
+      return { budget, nextCategoryToAssign };
+    },
+  );
 
 const assignCategoryToAccount = createServerFn({ method: 'POST' })
   .middleware([authMiddleware])
@@ -48,14 +54,10 @@ const reloadBudget = createServerFn({ method: 'POST' })
   )
   .handler(
     async ({
-      context: { ynabIntegration },
+      context: { user, ynabIntegration },
       data: { budgetId, serverKnowledge },
     }) => {
-      await updateAccountsAndCategories(
-        ynabIntegration,
-        budgetId,
-        serverKnowledge,
-      );
+      await updateBudget(user.id, budgetId, ynabIntegration, serverKnowledge);
     },
   );
 
@@ -82,29 +84,27 @@ function RouteComponent() {
   return (
     <main>
       <h1>{budget.name}</h1>
-      <p>
-        {nextCategoryToAssign == null ? (
-          <BalancingResults
-            budget={budget}
-            accounts={budget.accounts}
-            categories={budget.categories}
-          />
-        ) : (
-          <>
-            <p>
-              <em>Next category to assign:</em> {nextCategoryToAssign.name}
-            </p>
-            {budget.accounts
-              .filter((a) => isAssignableAccountType(a.type))
-              .map((account) => (
-                <button onClick={() => assignNext(account.id)}>
-                  {account.name}
-                </button>
-              ))}
-            <button onClick={() => assignNext(null)}>Any account</button>
-          </>
-        )}
-      </p>
+      {nextCategoryToAssign == null ? (
+        <BalancingResults
+          budget={budget}
+          accounts={budget.accounts}
+          categories={budget.categories}
+        />
+      ) : (
+        <>
+          <p>
+            <em>Next category to assign:</em> {nextCategoryToAssign.name}
+          </p>
+          {budget.accounts
+            .filter((a) => isAssignableAccountType(a.type))
+            .map((account) => (
+              <button onClick={() => assignNext(account.id)}>
+                {account.name}
+              </button>
+            ))}
+          <button onClick={() => assignNext(null)}>Any account</button>
+        </>
+      )}
       <button
         onClick={() =>
           reloadBudget({
@@ -162,7 +162,7 @@ function BalancingResults({
           const deficitFromMinBal = minBal - d.balance;
 
           return (
-            <tr>
+            <tr key={d.id}>
               <td>{d.name}</td>
               <td>{currency(d.balance)}</td>
               <td>{currency(minBal)}</td>

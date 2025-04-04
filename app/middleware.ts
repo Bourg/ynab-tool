@@ -45,5 +45,5 @@ export const ynabIntegrationMiddleware = createMiddleware()
       user.ynabIntegration = ynabIntegration;
     }
 
-    return await next({ context: { user, ynabIntegration } });
+    return await next({ context: { ynabIntegration } });
   });
