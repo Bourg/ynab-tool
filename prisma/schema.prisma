@@ -8,13 +8,14 @@ datasource db {
 }
 
 model User {
-  id              Int              @id @default(autoincrement())
-  username        String           @unique
-  hashedPassword  String           @unique
-  salt            String           @unique
-  createdAt DateTime @default(now()) @db.Timestamptz()
-  updatedAt DateTime @updatedAt @db.Timestamptz()
-  ynabIntegration YnabIntegration?
+  id                 Int                     @id @default(autoincrement())
+  username           String                  @unique
+  hashedPassword     String                  @unique
+  salt               String                  @unique
+  createdAt          DateTime                @default(now()) @db.Timestamptz()
+  updatedAt          DateTime                @updatedAt @db.Timestamptz()
+  ynabIntegration    YnabIntegration?
+  budgetAssociations UserBudgetAssociation[]
 }
 
 model YnabIntegration {
@@ -25,4 +26,57 @@ model YnabIntegration {
   refreshToken String
   createdAt    DateTime @db.Timestamptz()
   expiresAt    DateTime @db.Timestamptz()
+}
+
+model Budget {
+  id               String                  @id
+  serverKnowledge  Int?
+  name             String
+  isoCurrencyCode  String
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt @db.Timestamptz()
+  accounts         Account[]
+  categories       Category[]
+  userAssociations UserBudgetAssociation[]
+}
+
+model UserBudgetAssociation {
+  userId   Int
+  user     User   @relation(fields: [userId], references: [id])
+  budgetId String
+  budget   Budget @relation(fields: [budgetId], references: [id])
+
+  @@unique([userId, budgetId])
+}
+
+model Account {
+  id                 String     @id
+  sequence           BigInt     @default(autoincrement())
+  name               String
+  balance            Int
+  type               String
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt @db.Timestamptz()
+  budget             Budget     @relation(fields: [budgetId], references: [id])
+  budgetId           String
+  assignedCategories Category[]
+
+  @@index([budgetId, sequence])
+}
+
+model Category {
+  id                  String   @id
+  sequence            BigInt   @default(autoincrement())
+  name                String
+  balance             Int
+  hidden              Boolean
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt @db.Timestamptz()
+  budgetId            String
+  budget              Budget   @relation(fields: [budgetId], references: [id])
+  assignedToAccountId String?
+  assignedToAccount   Account? @relation(fields: [assignedToAccountId], references: [id])
+  anyAccount          Boolean  @default(false)
+
+  @@index([budgetId, sequence])
 }

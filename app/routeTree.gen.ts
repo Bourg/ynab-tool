@@ -16,6 +16,7 @@ import { Route as LoginImport } from './routes/login'
 import { Route as IndexImport } from './routes/index'
 import { Route as YnabRedirectImport } from './routes/ynab/redirect'
 import { Route as YnabConnectImport } from './routes/ynab/connect'
+import { Route as BudgetBudgetIdImport } from './routes/budget/$budgetId'
 
 // Create/Update Routes
 
@@ -49,6 +50,12 @@ const YnabConnectRoute = YnabConnectImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const BudgetBudgetIdRoute = BudgetBudgetIdImport.update({
+  id: '/budget/$budgetId',
+  path: '/budget/$budgetId',
+  getParentRoute: () => rootRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -74,6 +81,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupImport
       parentRoute: typeof rootRoute
     }
+    '/budget/$budgetId': {
+      id: '/budget/$budgetId'
+      path: '/budget/$budgetId'
+      fullPath: '/budget/$budgetId'
+      preLoaderRoute: typeof BudgetBudgetIdImport
+      parentRoute: typeof rootRoute
+    }
     '/ynab/connect': {
       id: '/ynab/connect'
       path: '/ynab/connect'
@@ -97,6 +111,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/budget/$budgetId': typeof BudgetBudgetIdRoute
   '/ynab/connect': typeof YnabConnectRoute
   '/ynab/redirect': typeof YnabRedirectRoute
 }
@@ -105,6 +120,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/budget/$budgetId': typeof BudgetBudgetIdRoute
   '/ynab/connect': typeof YnabConnectRoute
   '/ynab/redirect': typeof YnabRedirectRoute
 }
@@ -114,20 +130,34 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/budget/$budgetId': typeof BudgetBudgetIdRoute
   '/ynab/connect': typeof YnabConnectRoute
   '/ynab/redirect': typeof YnabRedirectRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/signup' | '/ynab/connect' | '/ynab/redirect'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/signup'
+    | '/budget/$budgetId'
+    | '/ynab/connect'
+    | '/ynab/redirect'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/signup' | '/ynab/connect' | '/ynab/redirect'
+  to:
+    | '/'
+    | '/login'
+    | '/signup'
+    | '/budget/$budgetId'
+    | '/ynab/connect'
+    | '/ynab/redirect'
   id:
     | '__root__'
     | '/'
     | '/login'
     | '/signup'
+    | '/budget/$budgetId'
     | '/ynab/connect'
     | '/ynab/redirect'
   fileRoutesById: FileRoutesById
@@ -137,6 +167,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
+  BudgetBudgetIdRoute: typeof BudgetBudgetIdRoute
   YnabConnectRoute: typeof YnabConnectRoute
   YnabRedirectRoute: typeof YnabRedirectRoute
 }
@@ -145,6 +176,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
+  BudgetBudgetIdRoute: BudgetBudgetIdRoute,
   YnabConnectRoute: YnabConnectRoute,
   YnabRedirectRoute: YnabRedirectRoute,
 }
@@ -162,6 +194,7 @@ export const routeTree = rootRoute
         "/",
         "/login",
         "/signup",
+        "/budget/$budgetId",
         "/ynab/connect",
         "/ynab/redirect"
       ]
@@ -174,6 +207,9 @@ export const routeTree = rootRoute
     },
     "/signup": {
       "filePath": "signup.tsx"
+    },
+    "/budget/$budgetId": {
+      "filePath": "budget/$budgetId.tsx"
     },
     "/ynab/connect": {
       "filePath": "ynab/connect.ts"

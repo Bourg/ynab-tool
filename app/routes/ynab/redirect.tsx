@@ -5,8 +5,8 @@ import { useEffect, useRef } from 'react';
 import { z } from 'zod';
 
 import { authMiddleware } from '~/middleware';
-import { prisma } from '~/server/db.server';
-import { getAccessToken } from '~/server/ynab.server';
+import { prisma } from '~/server/db';
+import { getAccessToken } from '~/server/ynab/auth';
 
 const codeValidator = z.object({ code: z.string() });
 

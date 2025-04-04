@@ -39,6 +39,7 @@ export default tseslint.config(
           'newlines-between': 'always',
         },
       ],
+      '@typescript-eslint/no-explicit-any': 'off',
     },
     settings: {
       'import/resolver': { typescript: true, node: true },

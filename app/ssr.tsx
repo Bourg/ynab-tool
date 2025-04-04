@@ -1,4 +1,4 @@
-import './server/config.server';
+import './server/config';
 import { getRouterManifest } from '@tanstack/react-start/router-manifest';
 import {
   createStartHandler,

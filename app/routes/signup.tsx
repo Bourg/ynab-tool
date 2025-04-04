@@ -3,9 +3,9 @@ import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
 
 import AuthForm from '~/components/AuthForm';
-import { hashPassword, newSalt } from '~/server/auth.server';
-import { prisma } from '~/server/db.server';
-import { setLoggedIn, useSession } from '~/server/session.server';
+import { hashPassword, newSalt } from '~/server/auth';
+import { prisma } from '~/server/db';
+import { setLoggedIn, useSession } from '~/server/session';
 
 export const Route = createFileRoute('/signup')({
   component: Login,
