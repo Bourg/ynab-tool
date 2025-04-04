@@ -52,7 +52,7 @@ async function getBudgetInternal(
   return getBudgetInternal(integration, budgetId, false);
 }
 
-async function updateAccountsAndCategories(
+export async function updateAccountsAndCategories(
   integration: YnabIntegration,
   budgetId: Budget['id'],
   serverKnowledge?: Budget['serverKnowledge'],
@@ -100,12 +100,14 @@ async function updateAccountsAndCategories(
           update: {
             name: account.name,
             balance: account.balance,
+            type: account.type,
           },
           create: {
             id: account.id,
             budgetId: budget.id,
             name: account.name,
             balance: account.balance,
+            type: account.type,
           },
           where: {
             id: account.id,

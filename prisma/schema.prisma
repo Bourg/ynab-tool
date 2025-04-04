@@ -42,28 +42,33 @@ model Budget {
 }
 
 model Account {
-  id        String   @id
-  sequence  BigInt   @default(autoincrement())
-  name      String
-  balance   BigInt
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @db.Timestamptz()
-  budget    Budget   @relation(fields: [budgetId], references: [id])
-  budgetId  String
+  id                 String     @id
+  sequence           BigInt     @default(autoincrement())
+  name               String
+  balance            Int
+  type               String
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt @db.Timestamptz()
+  budget             Budget     @relation(fields: [budgetId], references: [id])
+  budgetId           String
+  assignedCategories Category[]
 
-  @@index([budgetId, createdAt])
+  @@index([budgetId, sequence])
 }
 
 model Category {
-  id        String   @id
-  sequence  BigInt   @default(autoincrement())
-  name      String
-  balance   BigInt
-  hidden    Boolean
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @db.Timestamptz()
-  budgetId  String
-  budget    Budget   @relation(fields: [budgetId], references: [id])
+  id                  String   @id
+  sequence            BigInt   @default(autoincrement())
+  name                String
+  balance             Int
+  hidden              Boolean
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt @db.Timestamptz()
+  budgetId            String
+  budget              Budget   @relation(fields: [budgetId], references: [id])
+  assignedToAccountId String?
+  assignedToAccount   Account? @relation(fields: [assignedToAccountId], references: [id])
+  anyAccount          Boolean  @default(false)
 
-  @@index([budgetId, createdAt])
+  @@index([budgetId, sequence])
 }
